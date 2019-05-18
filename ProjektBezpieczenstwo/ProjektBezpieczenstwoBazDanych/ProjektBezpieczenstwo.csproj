@@ -111,6 +111,7 @@
     </ApplicationDefinition>
     <Compile Include="Cezar.cs" />
     <Compile Include="DES.cs" />
+    <Compile Include="Encryptor.cs" />
     <Compile Include="LFSR.cs" />
     <Compile Include="RailFence.cs" />
     <Page Include="MainWindow.xaml">

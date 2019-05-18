@@ -75,7 +75,7 @@ namespace ProjektBezpieczenstwoBazDanych
         //P Box Table  
         private int[] pbox = new int[] { 16,7,20,21,29,12,28,17,1,15,23,26,5,18,31,10,
                                          2,8,24,14,32,27,3,9,19,13,30,6,22,11,4,25 };
-
+        //tablica finalnej permuacji
         //Final Permutation Table  
         private int[] fp = new int[] { 40,8,48,16,56,24,64,32,39,7,47,15,55,23,63,31,
                                        38,6,46,14,54,22,62,30,37,5,45,13,53,21,61,29,
@@ -178,7 +178,7 @@ namespace ProjektBezpieczenstwoBazDanych
                 shiftedkey[i] = changedkey[i];
             }
         }
-
+        // permutacja poczatkowa
         private void InitialPermutation(int[] sentarray, int[] savedarray)
         {
             int tmp;
@@ -189,6 +189,7 @@ namespace ProjektBezpieczenstwoBazDanych
             }
         }
 
+        //podzial 64 bitow na dwie czesci po 32 bity
         private void DivideIntoLPTAndRPT(int[] sentarray, int[] savedLPT, int[] savedRPT)
         {
             for (int i = 0, k = 0; i < 32; i++, ++k)
@@ -222,7 +223,7 @@ namespace ProjektBezpieczenstwoBazDanych
                 DKey[j] = shiftedkey[i];
             }
         }
-
+         // przesuniecie e lewo
         private void CircularLeftShift(int[] HKey)
         {
             int i, FirstBit = HKey[0];
@@ -246,7 +247,7 @@ namespace ProjektBezpieczenstwoBazDanych
                 shiftedkey[j++] = DKey[i];
             }
         }
-
+        // do 48 bitow permutacja 
         private void CompressionPermutation()
         {
             int temp;
@@ -256,7 +257,7 @@ namespace ProjektBezpieczenstwoBazDanych
                 compressedkey[i] = shiftedkey[temp - 1];
             }
         }
-
+        // rozszerzeniowa permutacja
         private void ExpansionPermutation(int[] HPT, int[] ExpandedHPT)
         {
             int temp;
@@ -540,12 +541,14 @@ namespace ProjektBezpieczenstwoBazDanych
             ctca = ciphertext.ToCharArray();
             kca = key.ToCharArray();
             int j, k;
-
+            // zmieniam kazda literke na bit 
             //Converting plain text characters into binary digits  
             int st = ConvertTextToBits(ctca, ciphertextbin);
 
             int fst = AppendZeroes(ciphertextbin, st);
 
+
+            // zmieniam kazda literke na bit 
             //Converting key characters into binary digits  
             int sk = ConvertTextToBits(kca, keybin);
 

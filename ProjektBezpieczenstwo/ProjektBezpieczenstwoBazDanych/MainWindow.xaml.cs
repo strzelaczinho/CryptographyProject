@@ -32,6 +32,7 @@ namespace ProjektBezpieczenstwoBazDanych
         public char[] Alphabet { get; set; }
         public MainWindow()
         {
+            encryptor = new Encryptor();
             InitializeComponent();
             Alphabet = new char[] { 'A', 'Ą', 'B', 'C', 'Ć', 'D', 'E', 'Ę', 'F', 'G', 'H', 'I', 'J', 'K',
                 'L', 'Ł', 'M', 'N', 'Ń', 'O', 'Ó', 'P', 'R', 'S', 'Ś', 'T', 'U', 'W', 'Y', 'Z', 'Ź', 'Ż' };
@@ -108,7 +109,7 @@ namespace ProjektBezpieczenstwoBazDanych
                 return;
             }
         }
-   
+
 
         private void Button4_Click(object sender, RoutedEventArgs e)
         {
@@ -372,6 +373,7 @@ namespace ProjektBezpieczenstwoBazDanych
         }
         #endregion
         #region DES
+        //zaszyfrowanie
         private void Button11_Click(object sender, EventArgs e)
         {
             StreamReader s = new StreamReader(pliksciezkades);
@@ -386,6 +388,7 @@ namespace ProjektBezpieczenstwoBazDanych
             MessageBox.Show("Plik został zaszyfrowany w zaszyfrowane.txt");
         }
 
+        // plik z tekstem jawnym 
         private void Button12_Click(object sender, EventArgs e)
         {
             OpenFileDialog okienkoDes = new OpenFileDialog();
@@ -395,16 +398,15 @@ namespace ProjektBezpieczenstwoBazDanych
                 MessageBox.Show("Wybrano plik: " + okienkoDes.FileName);
                 pliksciezkades = okienkoDes.FileName;
             }
-          
-        }
 
+        }
+        // odszyfrowanie 
         private void Button10_Click(object sender, EventArgs e)
         {
             StreamReader s = new StreamReader(pliksciezkades);
             // plikdes.Text = s.ReadToEnd();
             String tekstDes = s.ReadToEnd();
             StreamReader k = new StreamReader(pliksciezkadesklucz);
-            //kluczdes.Text = k.ReadToEnd();
             odszyfrowanie = new DES();
             String tekstDesKlucz = k.ReadToEnd();
 
@@ -414,6 +416,7 @@ namespace ProjektBezpieczenstwoBazDanych
             }
             MessageBox.Show("Plik został odszyfrowany w odszyfrowane.txt");
         }
+        // plik z kluczem
         private void Button13_Click(object sender, EventArgs e)
         {
             OpenFileDialog okienkoDesKlucz = new OpenFileDialog();
@@ -424,6 +427,137 @@ namespace ProjektBezpieczenstwoBazDanych
                 pliksciezkadesklucz = okienkoDesKlucz.FileName;
             }
         }
+
+
+
+
         #endregion
+        #region strumieniowy
+        Encryptor encryptor = null;
+        private void Button_LoadFile_Click(object sender, RoutedEventArgs e)
+        {
+            string plainText = encryptor.ReadTextFromFile();
+            /*
+            if (encryptor.checkIfStringContainsOnlyAsciiChars(plainText) == false)
+            {
+                encryptor.ShowErrorPopUp("Wczytany plik zawiera niedozwolony znak spoza znaków ASCII.");
+                return;
+            }
+            */
+           TextBox_PlainText.Text = plainText;
+           string binaryText = encryptor.ConvertStringToBinaryString(plainText);
+           TextBox_BinaryText.Text = binaryText;
+       }
+
+       private void Button_LoadBinaryText_Click(object sender, RoutedEventArgs e)
+       {
+           string binaryText = encryptor.ReadTextFromFile();
+           if (encryptor.checkIfStringIsBinary(binaryText) == false)
+           {
+               encryptor.ShowErrorPopUp("Wczytany plik zawiera niedozwolony znak (inny niż 0 lub 1).");
+               return;
+           }
+           else
+           {
+               TextBox_BinaryText.Text = binaryText;
+               string plainText = encryptor.convertBitStringToString(binaryText);
+               TextBox_PlainText.Text = plainText;
+           }
+       }
+
+       private void Button_Info_Click(object sender, RoutedEventArgs e)
+       {
+           encryptor.ShowInfoPopUp();
+       }
+
+       private void Button_LoadKey_Click(object sender, RoutedEventArgs e)
+       {
+           string keyText = encryptor.ReadTextFromFile();
+           if (encryptor.checkIfStringIsBinary(keyText) == false)
+           {
+               encryptor.ShowErrorPopUp("Wczytany plik zawiera niedozwolony znak (inny niż 0 lub 1).");
+               return;
+           }
+           TextBox_CipherKey.Text = keyText;
+       }
+
+       private void Button_CipherOrDecipher1_Click(object sender, RoutedEventArgs e)
+       {
+           if (TextBox_BinaryText.Text.Length == 0)
+               encryptor.ShowErrorPopUp("Pole \"Tekst binarnie\" jest puste.");
+           else if (encryptor.checkIfStringIsBinary(TextBox_BinaryText.Text) == false)
+               encryptor.ShowErrorPopUp("Pole \"Tekst binarnie\" zawiera niedozwolony znak (inny niż 0 lub 1).");
+           else if (TextBox_CipherKey.Text.Length == 0)
+               encryptor.ShowErrorPopUp("Pole \"Klucz szyfrowania\" jest puste.");
+           else if (encryptor.checkIfStringIsBinary(TextBox_CipherKey.Text) == false)
+               encryptor.ShowErrorPopUp("Pole \"Klucz szyfrowania\" zawiera niedozwolony znak (inny niż 0 lub 1).");
+           else
+           {
+               string binaryText = TextBox_BinaryText.Text;
+               string binaryKey = TextBox_CipherKey.Text;
+               string cipheredText = "";
+
+               if (binaryText.Length > binaryKey.Length)
+               {
+                   encryptor.ShowPopUp("Klucz jest zbyt krótki, dlatego zostanie powielony do odpowiedniej długości.", "Za krótki klucz!");
+                   encryptor.RepeatKeyToMatchLength(binaryText, ref binaryKey);
+                   TextBox_CipherKey.Text = binaryKey;
+               }
+
+               cipheredText = encryptor.CipherBinaryStringUsingBinaryString(binaryText, binaryKey);
+               TextBox_CipheredText.Text = cipheredText;
+               TextBox_CipheredTextAsChars.Text = encryptor.convertBitStringToString(cipheredText);
+           }
+       }
+
+       private void TextBox_PlainText_TextChanged(object sender, TextChangedEventArgs e)
+       {
+           Label_PlainTextLength.Content = "Długość tekstu do zaszyfrowania: " + TextBox_PlainText.Text.Length;
+           TextBox_BinaryText.Text = encryptor.ConvertStringToBinaryString(TextBox_PlainText.Text);
+       }
+
+       private void TextBox_BinaryText_TextChanged(object sender, TextChangedEventArgs e)
+       {
+           Label_BinaryTextLength.Content = "Liczba bitów do zaszyfrowania: " + TextBox_BinaryText.Text.Length;
+       }
+
+       private void TextBox_CipherKey_TextChanged(object sender, TextChangedEventArgs e)
+       {
+           Label_CipherKeyLength.Content = "Liczba bitów klucza szyfrowania: " + TextBox_CipherKey.Text.Length;
+       }
+
+       private void TextBox_CipheredText_TextChanged(object sender, TextChangedEventArgs e)
+       {
+           Label_CipheredTextLength.Content = "Liczba bitów szyfrogramu: " + TextBox_CipheredText.Text.Length;
+       }
+
+       private void TextBox_CipheredTextAsChars_TextChanged(object sender, TextChangedEventArgs e)
+       {
+           Label_CipheredTextAsCharsLength.Content = "Długość szyfrogramu: " + TextBox_CipheredTextAsChars.Text.Length;
+       }
+
+       private void Button_ClearAllFields_Click(object sender, RoutedEventArgs e)
+       {
+           TextBox_PlainText.Text = "";
+           TextBox_BinaryText.Text = "";
+           TextBox_CipherKey.Text = "";
+           TextBox_CipheredText.Text = "";
+           TextBox_CipheredTextAsChars.Text = "";
+       }
+
+       private void Button_SaveCipherAsChars_Click(object sender, RoutedEventArgs e)
+       {
+           encryptor.SaveToFileAsTextString(TextBox_CipheredTextAsChars.Text);
+       }
+
+       private void Button_SaveCipherBinary_Click(object sender, RoutedEventArgs e)
+       {
+           encryptor.SaveToFileAsTextString(TextBox_CipheredText.Text);
+       }
+        #endregion
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }

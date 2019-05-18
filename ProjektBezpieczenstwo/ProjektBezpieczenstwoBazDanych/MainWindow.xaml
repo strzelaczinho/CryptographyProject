@@ -7,7 +7,12 @@
         mc:Ignorable="d"
         Title="Bezpieczenstwo PSY zadania" Height="450" Width="800" WindowStartupLocation="CenterScreen" >
     <Grid>
-        <TabControl>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="335*"/>
+            <ColumnDefinition Width="91*"/>
+            <ColumnDefinition Width="366*"/>
+        </Grid.ColumnDefinitions>
+        <TabControl SelectionChanged="TabControl_SelectionChanged" Grid.ColumnSpan="3">
             <TabItem Header="RailFence">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -266,8 +271,52 @@
                     <ListBox Grid.Column="1" Margin="141,164,180,22" Name="listBox1"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="Synchronous">
+            <TabItem Header="Strumieniowy ">
+                <Grid Margin="0,0,26,77">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="229*"/>
+                        <ColumnDefinition Width="531*"/>
+                        <ColumnDefinition Width="0*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="TextBox_PlainText" HorizontalAlignment="Left" Height="44" Margin="0,131,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="290"  FontSize="11" TextChanged="TextBox_PlainText_TextChanged" AcceptsReturn="True" Grid.ColumnSpan="2"/>
+                    <Label x:Name="Label_PlainText" Content="                         Tekst:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,99,0,0" RenderTransformOrigin="1.122,0.538"  FontSize="16" Width="290" Height="31" Grid.ColumnSpan="2"/>
+                    <Label x:Name="Label_PlainTextLength" Content="Długość tekstu: 0" HorizontalAlignment="Right" Margin="0,99,412,215" RenderTransformOrigin="1.122,0.538"  FontSize="16" Width="148" Grid.ColumnSpan="2"/>
 
+                    <TextBox x:Name="TextBox_BinaryText" HorizontalAlignment="Left" Height="45" Margin="66,131,-23,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="488"  FontSize="16" TextChanged="TextBox_BinaryText_TextChanged" AcceptsReturn="True" IsReadOnly="True" Grid.Column="1" Grid.ColumnSpan="2"/>
+                    <Label x:Name="Label_BinaryText" Content="Tekst binarnie:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="66,100,0,0" RenderTransformOrigin="1.122,0.538"  FontSize="16" Width="200" Height="30" Grid.Column="1"/>
+                    <Label x:Name="Label_BinaryTextLength" Content="Liczba bitów: 0" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,99,-23,0" RenderTransformOrigin="1.122,0.538"  FontSize="16" Width="283" Height="31" Grid.Column="1" Grid.ColumnSpan="2"/>
+
+                    <TextBox x:Name="TextBox_CipherKey" HorizontalAlignment="Left" Height="45" Margin="0,227,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="290"  FontSize="16" TextChanged="TextBox_CipherKey_TextChanged" AcceptsReturn="True" IsReadOnly="True" Grid.ColumnSpan="2"/>
+                    <Label x:Name="Label_CipherKey" Content="Klucz " HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,180,0,0" RenderTransformOrigin="1.122,0.538"  FontSize="16" Height="37" Width="85"/>
+                    <Label x:Name="Label_CipherKeyLength" Content="Liczba bitów klucza : 0" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,181,470,0" RenderTransformOrigin="1.122,0.538"  FontSize="16" Width="205" Height="36" Grid.ColumnSpan="2"/>
+
+                    <TextBox x:Name="TextBox_CipheredText" HorizontalAlignment="Left" Height="45" Margin="66,227,-23,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="488"  FontSize="16" TextChanged="TextBox_CipheredText_TextChanged" AcceptsReturn="True" IsReadOnly="True" Grid.Column="1" Grid.ColumnSpan="2"/>
+                    <Label x:Name="Label_CipheredText" Content="Szyfrogram binarnie:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="66,181,0,0" RenderTransformOrigin="1.122,0.538"  FontSize="16" Width="200" Height="41" Grid.Column="1"/>
+                    <Label x:Name="Label_CipheredTextLength" Content="Liczba bitów szyfrogramu: 0" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,181,-23,0" RenderTransformOrigin="1.122,0.538"  FontSize="16" Width="283" Height="41" Grid.Column="1" Grid.ColumnSpan="2"/>
+
+                    <Button x:Name="Button_LoadFile" Content="tekst z pliku" HorizontalAlignment="Left" VerticalAlignment="Top" Width="137" Margin="0,10,0,0" Click="Button_LoadFile_Click" FontSize="16" Height="39"/>
+                    <Button x:Name="Button_LoadBinaryText" Content="bity z pliku" HorizontalAlignment="Left" VerticalAlignment="Top" Width="137" Margin="0,54,0,0" Click="Button_LoadBinaryText_Click" FontSize="16" Height="40"/>
+                    <Button x:Name="Button_LoadKey" Content="klucz z pliku" HorizontalAlignment="Left" VerticalAlignment="Top" Width="148" Margin="142,10,0,0" FontSize="16" Height="40" Click="Button_LoadKey_Click" Grid.ColumnSpan="2"/>
+                    <Button x:Name="Button_CipherOrDecipher1" Content="Zaszyfruj / Deszyfruj" HorizontalAlignment="Left" VerticalAlignment="Top" Width="148" Margin="142,55,0,0" FontSize="16" Height="40" Click="Button_CipherOrDecipher1_Click" Grid.ColumnSpan="2"/>
+                    <Button x:Name="Button_SaveCipherAsChars" Content="Zapisz szyfrogram" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Margin="66,12,0,0" FontSize="16" Height="40" Click="Button_SaveCipherAsChars_Click" Grid.Column="1"/>
+                    <Button x:Name="Button_SaveCipherBinary" Content="Zapisz szyfrogram jako bity" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Margin="66,55,0,0" FontSize="16" Height="40" Click="Button_SaveCipherBinary_Click" RenderTransformOrigin="0.3,0.425" Grid.Column="1"/>
+                    <Button x:Name="Button_ClearAllFields" Content="Wyczyść pola" HorizontalAlignment="Left" VerticalAlignment="Top" Width="283" Margin="271,55,-23,0" FontSize="16" Height="39" Click="Button_ClearAllFields_Click" Grid.Column="1" Grid.ColumnSpan="2"/>
+                    <Button x:Name="Button_Info" Content="Info" HorizontalAlignment="Left" VerticalAlignment="Top" Width="283" Margin="271,12,-23,0" FontSize="16" Height="40" Click="Button_Info_Click" Grid.Column="1" Grid.ColumnSpan="2"/>
+
+
+                    <TextBox x:Name="TextBox_CipheredTextAsChars" HorizontalAlignment="Left" Height="60" Margin="-1,327,-25,-73" TextWrapping="Wrap" VerticalAlignment="Top" Width="786"  FontSize="16" TextChanged="TextBox_CipheredTextAsChars_TextChanged" AcceptsReturn="True" IsReadOnly="True" RenderTransformOrigin="0.5,0.5" Grid.ColumnSpan="3">
+                        <TextBox.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform/>
+                                <SkewTransform/>
+                                <RotateTransform Angle="-0.079"/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </TextBox.RenderTransform>
+                    </TextBox>
+                    <Label x:Name="Label_CipheredTextAsChars" Content="Szyfrogram:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,277,0,-9" RenderTransformOrigin="1.122,0.538"  FontSize="16" Width="290" Height="46" Grid.ColumnSpan="2"/>
+                    <Label x:Name="Label_CipheredTextAsCharsLength" Content="Długość szyfrogramu: 0" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,277,-23,-9" RenderTransformOrigin="1.122,0.538"  FontSize="16" Width="488" Height="46" Grid.Column="1" Grid.ColumnSpan="2"/>
+                </Grid>
             </TabItem>
             <TabItem Header="DES">
                 <Grid>
